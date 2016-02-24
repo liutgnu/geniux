@@ -1,2 +1,7 @@
+to compile:
+1)make sure in 32-bit linux
+2)type the following command to compile:
+	make fakedisk
+
 to run:
-qemu-system-i386 -m 8 -fda fakedisk
+	qemu-system-i386 -m 8 -fda fakedisk
