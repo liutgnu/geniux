@@ -1,31 +1,27 @@
-objects1 = initial.o kernel.o keyboard.o keyboard_mid.o schedule.o syscall.o user_gus_num.o user_pnt_time.o sound.o
+objects1 = syscall.o user_task.o fork.o panic.o schedule.o memory.o printk.o
 
-objects2 = initial.c keyboard.c keyboard_mid.c schedule.c syscall.c user_gus_num.c user_pnt_time.c sound.c
+objects2 = syscall.c user_task.c fork.c panic.c schedule.c memory.c printk.c
 
-final.bin: $(objects1) $(objects2)
+kernel.o: kernel.s
+	as -o kernel.o kernel.s
+
+page.o: page.s
+	as -o page.o page.s
+
+final.bin: kernel.o page.o $(objects1) $(objects2)
 	gcc -c $(objects2)
-	ld -Ttext 0x00 --oformat binary -o final.bin $(objects1) -M>system.map
+	ld -Ttext 0x00 --oformat binary -o final.bin kernel.o page.o $(objects1) -M>system.map
+
+system: kernel.o page.o $(objects1)
+	ld -Ttext 0x00 -o system kernel.o page.o $(objects1)
 
 boot.o:boot.s
 	as86 -0 -o boot.o boot.s
 boot:boot.o
 	ld86 -0 -d -o boot boot.o
 
-kernel.s:kernel.S
-	gcc -E kernel.S -o kernel.s
-
-Image:final.bin boot
-	dd if=boot of=Image
-	dd if=final.bin of=Image bs=512 seek=1 
-disk:Image
-	dd if=Image of=/dev/fd0
-	dd if=god.wav of=/dev/fd0 bs=512 seek=128
-	sync
-
-fakedisk:Image
-	dd if=Image of=fakedisk
-	dd if=god.wav of=fakedisk bs=512 seek=128
-	sync
-
+fakedisk:final.bin boot
+	dd if=boot of=fakedisk
+	dd if=final.bin of=fakedisk bs=512 seek=1 
 clean: 
-	rm -f $(objects1) Image boot boot.o kernel.s final.bin system.map
+	rm -f $(objects1) Image boot boot.o kernel.o page.o final.bin system.map

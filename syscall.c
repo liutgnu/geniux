@@ -2,20 +2,13 @@
 *we need some syscall here, so user applications could get kernel services.
 */
 
-//int sys_input();	//0 
+//int sys_fork();	//0 
 //int sys_print();	//1
 //int sys_utime();	//2
-//int sys_sound();	//3
 
-#include "tsk.h"
-#include "varible.h"
-extern char keyboard_mid();
-extern void play_sound();
-
-int sys_input()
-{
-	return (int)keyboard_mid();
-}
+extern int sys_fork();
+extern int jiffies;
+typedef int (*f_int)();
 
 int sys_print(char ch,int z)  //start from 0
 {
@@ -27,26 +20,20 @@ __asm__ volatile ("movl $0x18,%%edx\n\t"
 return 0;
 }
 
-int sys_sound()
-{
-	play_sound();
-	return 0;
-}
-
 int sys_utime()
 {
 	return (jiffies);  //no need to change 0.01s into s
 }
 
-//c system call interface
-char input()
+////////////////////////c system call interface
+int fork()
 {
 	int int_num=0;
 	int tmp;
 	__asm__ ("int $0x80"
 		:"=a" (tmp)
 		:"a" (int_num));
-	return (char)tmp;
+	return tmp;
 }
 
 //print on screen in X-Y form
@@ -87,9 +74,4 @@ int time_s()
 	return (tmp/100);
 }
 
-void sound()
-{
-	int int_num=3;
-	__asm__ ("int $0x80"
-		::"a" (int_num));
-}
+f_int syscall_table[]={ sys_fork, sys_print, sys_utime };

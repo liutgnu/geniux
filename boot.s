@@ -1,3 +1,22 @@
+!assume kernel le 100k, music le 500k
+!disk image:
+! 0.5k  100k           500k
+!|---|--------|--------------------|--.... 
+!
+!memory image:
+!  7c00(31k)                          a0000(640k)
+!|---|------------------------------------|
+!
+!                                9dc00(631k)  
+!|------------------------------------|---|
+!
+!  7c00    20c00                 9dc00     
+!|---|--100k--|------------500k-------|---|
+!
+!      19000                 96000
+!|--100k--|--------500k---------|---------|
+!
+
 .text
 begtext:
 .data
@@ -6,16 +25,17 @@ begdata:
 begbss:
 .text
 
+!rely on memory image geometry
+!note! when DESTSEG changed, so should gdt_opcode!!!
 BOOTSEG = 0x07c0
-INITSEG = 0x9000
-KERNELSEG = 0x0800
-SYSLEN = 64
+DESTSEG = 0x9dc0
+KERNELSEG = 0x07c0
 
 entry start
 start:
 mov ax,#BOOTSEG
 mov ds,ax
-mov ax,#INITSEG
+mov ax,#DESTSEG
 mov es,ax
 xor ax,ax
 mov si,ax
@@ -23,31 +43,89 @@ mov di,ax
 mov cx,#256
 rep
 movw
-jmpi go,#INITSEG
+jmpi go,#DESTSEG
 
 go:
 mov ax,cs
 mov ds,ax
 mov ss,ax
-mov sp,#0x500
+mov sp,#0x600
+mov bp,#msgl
 
-load_kernel:
-mov dx,#0x0000
-mov cx,#0x0002
-mov ax,#KERNELSEG
+!extend_mem_size
+mov ah,#0x88
+int 0x15
+mov [2],ax	!0x9dc02 
+
+!load kernel
+call load
+
+!load music
+mov ax,#4
+mov sector,ax
+mov ax,#1
+mov head,ax
+mov ax,#5
+mov track,ax
+mov ax,#1000
+mov f_len,ax
+mov ax,#0x2000	!music 2000:0c00
+mov des_seg,ax
+mov ax,#0xc00
+mov offset,ax
+call load
+
+!source,ds:si des,es:di
+mov ax,#0x07c0
+mov ds,ax
+xor ax,ax
 mov es,ax
-mov bx,#0x0000
-mov ax,#0x0200+SYSLEN
-int 0x13
-jnc load
-die_one:jmp die_one
 
-sector:		.word 3
-head:		.word 1
-track:		.word 3
-f_len:		.word 915
-des_seg:	.word 0x1000
-offset:		.word 0
+unfin1:
+mov cx,#0x8000
+unfin2:
+xor ax,ax
+mov si,ax
+mov di,ax
+rep
+movw
+
+mov ax,es
+add ax,#0x1000
+mov es,ax
+mov ax,ds
+add ax,#0x1000
+mov ds,ax
+cmp ax,#0x97c0
+jl finish
+jg unfin1
+mov cx,#0x3000
+jmp unfin2
+
+finish:
+mov ax,cs
+mov ds,ax
+mov es,ax
+
+on_A20:
+in al,#0xee
+
+cli
+lidt idt_opcode
+lgdt gdt_opcode
+
+mov ax,#0x0001
+lmsw ax
+
+jmpi 0,8
+
+!rely on disk image geometry
+sector:		.word 2
+head:		.word 0
+track:		.word 0
+f_len:		.word 200
+des_seg:	.word 0
+offset:		.word 0x7c00
 
 load:
 mov ax,f_len
@@ -112,34 +190,8 @@ dec bx
 mov f_len,bx
 jmp midb
 
-!move kernel to 0x0000
 ok5:
-mov ax,cs
-mov es,ax
-mov bp,#msgl	!keep those
-
-!source,ds:si des,es:di
-cli
-mov ax,#KERNELSEG
-mov ds,ax
-xor ax,ax
-mov es,ax
-mov si,ax
-mov di,ax
-mov cx,#0x2280	!value keep samll
-rep
-movsd
-
-mov ax,#INITSEG
-mov ds,ax
-mov es,ax
-lidt idt_opcode
-lgdt gdt_opcode
-
-mov ax,#0x0001
-lmsw ax
-
-jmpi 0x38,8
+ret
 
 gdt:
 	.word 0,0,0,0
@@ -154,17 +206,12 @@ gdt:
 	.word 0x9200
 	.word 0x00c0
 
-	.word 0x0002
-	.word 0x8000
-	.word 0x920b
-	.word 0x00c0
-
 idt_opcode:
 	.word 0
 	.word 0,0
 gdt_opcode:
 	.word 0x7ff
-	.long 0x90000+gdt
+	.long 0x9dc00+gdt
 
 msgl: .ascii "Loading system ..."
       .byte 13,10
