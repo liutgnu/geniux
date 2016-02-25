@@ -28,7 +28,6 @@ Image:final.bin boot
 fakedisk:Image minix.img
 	dd if=Image of=fakedisk
 	dd if=minix.img of=fakedisk bs=512 seek=201 count=100
-	cp fakedisk ../devel/
 elf_child:elf_child.c
 	gcc -S elf_child.c
 	as -o elf_child.o elf_child.s
