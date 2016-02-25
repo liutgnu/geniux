@@ -5,9 +5,15 @@
 //int sys_fork();	//0 
 //int sys_print();	//1
 //int sys_utime();	//2
+//int sys_open();       //3
+//int sys_close();      //4
+//int sys_read();       //5
 
 extern int sys_fork();
 extern int jiffies;
+extern int open_file(char * dir_file);
+extern int close_file(int fd);
+extern int read_file(int fd,unsigned char * buf,int b_size);
 typedef int (*f_int)();
 
 int sys_print(char ch,int z)  //start from 0
@@ -23,6 +29,21 @@ return 0;
 int sys_utime()
 {
 	return (jiffies);  //no need to change 0.01s into s
+}
+
+int sys_open(char * dir_file)
+{
+        return open_file(dir_file);
+}
+
+int sys_close(int fd)
+{
+        return close_file(fd);
+}
+
+int sys_read(int fd,unsigned char * buf,int b_size)
+{
+        return read_file(fd,buf,b_size);
 }
 
 ////////////////////////c system call interface
@@ -74,4 +95,34 @@ int time_s()
 	return (tmp/100);
 }
 
-f_int syscall_table[]={ sys_fork, sys_print, sys_utime };
+int open(char * dir_file)
+{
+  int int_num=3;
+  int tmp;
+  __asm__ ("int $0x80"
+	   :"=a" (tmp)
+	   :"a" (int_num),"b" (dir_file));
+  return tmp;
+}
+
+int close(int fd)
+{
+  int int_num=4;
+  int tmp;
+  __asm__ ("int $0x80"
+	   :"=a" (tmp)
+	   :"a" (int_num),"b" (fd));
+  return tmp;
+}
+
+int read(int fd,unsigned char * buf,int b_size)
+{
+  int int_num=5;
+  int tmp;
+  __asm__ ("int $0x80"
+	   :"=a" (tmp)
+	   :"a" (int_num),"b" (fd),"c" (buf),"d" (b_size));
+  return tmp;
+}
+
+f_int syscall_table[]={ sys_fork, sys_print, sys_utime ,sys_open ,sys_close, sys_read };

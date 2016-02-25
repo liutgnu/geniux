@@ -127,6 +127,10 @@ jmp after_paging
 ##goto TSS_0
 after_paging:
 call init_mem
+call ramdisk_init
+call buffer_init
+call fs_init
+
 pushfl
 andl $0xffffbfff,(%esp)
 popfl
