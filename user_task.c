@@ -1,4 +1,5 @@
 #include"sys_interface.h"
+extern void print_logo();
 
 void task0()
 {
@@ -7,34 +8,40 @@ void task0()
 	   "mov  %%ax,%%es\n\t"
 	   "mov  %%ax,%%fs\n\t"
 	   "mov  %%ax,%%gs"::);
-  unsigned char char_tmp[100]={0,};
-  int fd;
-  int int_num=0;
   int tmp;
-  int i=0,j=160;
-  __asm__ ("int $0x80":"=a" (tmp):"a" (int_num));
+  int tmp1;
+  int int_num=0;  //syscall number for fork
+  __asm__ ("int $0x80":"=a" (tmp):"a" (int_num));  //fork!
   if (tmp==0)  //child
   {
-    print_XY('C',0,0);
+    print_XY('A',0,2);
+    exe("/binary/elf_child");
     for(;;);
   }
   else if (tmp==-1)
   {
-    print_XY('E',0,1);
+    print_XY('B',1,2);
+    for(;;);
   }
   else  //parent
   {
-    if ((fd=open("/hello.c"))==-1)
-      {print_XY('B',1,1);for(;;);}
-    if (read(fd,char_tmp,90)==-1)
-      {print_XY('B',2,1);for(;;);}
-    while (char_tmp[i]!='\0')
-      {print_Z(char_tmp[i++],j++);}
-    if (close(fd)==-1)
-      {print_XY('B',3,1);for(;;);}
-    print_XY('A',4,1);
-    for (;;);
+    print_logo();
+    __asm__ ("int $0x80":"=a" (tmp1):"a" (int_num));  //fork again!
+    if (tmp1==0)
+    {
+      print_XY('C',2,2);
+      exe("/binary/elf_parent");
+      for(;;);
+    }
+    else if (tmp1==-1)
+    {
+      print_XY('D',3,2);
+      for(;;);
+    }
+    else
+    {
+      print_XY('E',4,2);
+      for (;;);
+    }
   }
 }
-
-

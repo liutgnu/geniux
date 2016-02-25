@@ -11,16 +11,16 @@
 #define F_DATA_START 0x19000
 /*byte_count is 2^n*/
 #define mem_copy(src_addr,dst_addr,byte_count)  \
-	__asm__ ("push %%es\n\t"  \
-		"push %%ds\n\t"  \
+	__asm__ ("mov %%ds,%%bx\n\t"  \
+		"mov %%es,%%dx\n\t"  \
 		"mov $0x10,%%ax\n\t"  \
 		"mov %%ax,%%es\n\t"  \
 		"mov %%ax,%%ds\n\t"  \
 		"cld\n\t"  \
 		"rep\n\t"  \
 		"movsl\n\t"  \
-		"pop %%ds\n\t"  \
-		"pop %%es\n\t"  \
+		"mov %%dx,%%es\n\t"  \
+		"mov %%bx,%%ds\n\t"  \
 		::"c" (byte_count/4),"D" (dst_addr),"S" (src_addr))
 
 void init_ramdisk()

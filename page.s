@@ -15,10 +15,12 @@ page_fault:
 	mov   %dx,%fs
 	movl  %cr2,%edx
 	pushl %edx
-	testl $2,%eax
-	je 1f
+	testl $1,%eax
+	je    1f
 	call  do_page_wprotected
-1:	addl  $4,%esp
+	jmp   2f
+1:	call  do_no_page
+2:	addl  $4,%esp
 	pop   %fs
 	pop   %es
 	pop   %ds

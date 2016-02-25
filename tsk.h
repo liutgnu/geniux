@@ -37,6 +37,7 @@ struct gldt_struct{  //1 item of *dt
 struct task_struct{
   long state;  //-1 can't run, 0 can run
   long pid;
+  int exe_fd;
   struct task_struct * p_parent;
   struct task_struct * p_child;
   struct gldt_struct ldt[3];

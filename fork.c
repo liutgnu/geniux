@@ -3,16 +3,16 @@
 #define MAIN_MEM_START 0x100000
 /*byte_count is 2^n*/
 #define mem_copy(src_addr,dst_addr,byte_count)  \
-	__asm__ ("push %%es\n\t"  \
-		"push %%ds\n\t"  \
+	__asm__ ("mov %%ds,%%bx\n\t"  \
+		"mov %%es,%%dx\n\t"  \
 		"mov $0x10,%%ax\n\t"  \
 		"mov %%ax,%%es\n\t"  \
 		"mov %%ax,%%ds\n\t"  \
 		"cld\n\t"  \
 		"rep\n\t"  \
 		"movsl\n\t"  \
-		"pop %%ds\n\t"  \
-		"pop %%es\n\t"  \
+		"mov %%dx,%%es\n\t"  \
+		"mov %%bx,%%ds\n\t"  \
 		::"c" (byte_count>>2),"D" (dst_addr),"S" (src_addr))
 
 //task_map contains 64 bits,0 means no task, 1 means task occuping.
@@ -42,7 +42,10 @@ int find_empty_task()
       i++;
     }
     else
+    {
+      t_map.m_low=(t_map.m_low)|(1<<i);
       break;
+    }
   }
   if (i==32)
   {
@@ -55,7 +58,10 @@ int find_empty_task()
 	i++;
       }
       else
+      {
+	t_map.m_high=(t_map.m_high)|(1<<(i-32));
 	break;
+      }
     }
   }
   if (i==64)
@@ -89,13 +95,15 @@ int copy_process(unsigned long ebp,unsigned long edi,unsigned long esi,
     printk("warning:copy_process error!\n");
     return -1;
   }
+  
   p_tasks[tmp]=p;
   p->pid=tmp;
   p->p_parent=current;
   current->p_child=p;
   p->p_child=(struct task_struct *)0;
+  p->exe_fd=current->exe_fd;
   p->tss.back_link=0;
-  p->tss.esp0=(unsigned long)p+4*1024;  //top of this page. though in app mem area, managed by kernel.
+  p->tss.esp0=(unsigned long)p+4*1024-4;  //top of this page. though in app mem area, managed by kernel.
   p->tss.ss0=0x10;  //kernel, data seg
 
   //esp1,ss1,esp2,ss2 are not supported by now.
@@ -160,7 +168,29 @@ unsigned long copy_tables_pages()
     return 0;
   }
   mem_copy(src_base,dst_base,4*1024);  //copy table
-  
+
+  for (;i<1024;i++)
+  {
+    if (*(tmp+i) & 1)
+    {
+      dst_base=phy_get_free_page();
+      if (dst_base==(unsigned char *)0)
+      {
+	i--;
+	for (;i>=0;i--)
+	{
+	  if (*(tmp+i) & 1)
+	    phy_free_page((unsigned char *)(*(tmp+i) & 0xfffff000));
+	}
+	phy_free_page((unsigned char *)tmp);
+	return 0;
+      }
+      src_base=(unsigned char *)(*(tmp+i) & 0xfffff000);
+      mem_copy(src_base,dst_base,4096);
+      *(tmp+i)=(unsigned long)dst_base | 7;
+    }
+  }
+/*
   while ((*(tmp+i) & 1) && i<1024)  //oops, YOU USED 4G LINEAR SPACE!!!
   {
     dst_base=phy_get_free_page();
@@ -180,6 +210,7 @@ unsigned long copy_tables_pages()
     *(tmp+i)=(unsigned long)dst_base | 7;  //adapt table
     i++;
   }
+*/
   if (current->pid==0 || current->pid==1);
   else
   {  

@@ -6,3 +6,4 @@ extern int time_s();
 extern int open();
 extern int close();
 extern int read();
+extern int execve();

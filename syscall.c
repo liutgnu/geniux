@@ -2,13 +2,15 @@
 *we need some syscall here, so user applications could get kernel services.
 */
 
-//int sys_fork();	//0 
+//int sys_fork();	//0
 //int sys_print();	//1
 //int sys_utime();	//2
 //int sys_open();       //3
 //int sys_close();      //4
 //int sys_read();       //5
+//int sys_exec();	//6
 
+extern int sys_exec();
 extern int sys_fork();
 extern int jiffies;
 extern int open_file(char * dir_file);
@@ -125,4 +127,14 @@ int read(int fd,unsigned char * buf,int b_size)
   return tmp;
 }
 
-f_int syscall_table[]={ sys_fork, sys_print, sys_utime ,sys_open ,sys_close, sys_read };
+int exe(char * filename)
+{
+  int int_num=6;
+  int tmp;
+  __asm__ ("int $0x80"
+	   :"=a" (tmp)
+	   :"a" (int_num),"b" (filename));
+  return tmp;
+}
+
+f_int syscall_table[]={ sys_fork, sys_print, sys_utime ,sys_open ,sys_close, sys_read, sys_exec };

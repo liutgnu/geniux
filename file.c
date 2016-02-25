@@ -5,16 +5,16 @@
 #include "fs.h"
 #include "kernel.h"
 #define mem_copyb(src_addr,dst_addr,byte_count)  \
-	__asm__ ("push %%es\n\t"  \
-		"push %%ds\n\t"  \
+	__asm__ ("mov %%ds,%%bx\n\t"  \
+		"mov %%es,%%dx\n\t"  \
 		"mov $0x10,%%ax\n\t"  \
 		"mov %%ax,%%es\n\t"  \
 		"mov %%ax,%%ds\n\t"  \
 		"cld\n\t"  \
 		"rep\n\t"  \
 		"movsb\n\t"  \
-		"pop %%ds\n\t"  \
-		"pop %%es\n\t"  \
+		"mov %%dx,%%es\n\t"  \
+		"mov %%bx,%%ds\n\t"  \
 		::"c" (byte_count),"D" (dst_addr),"S" (src_addr))
 
 extern short int get_absolute_dir_file(char * p_absolute_dir);
@@ -125,15 +125,81 @@ int read_file(int fd,unsigned char * buf,int b_size)
 
 unsigned char * f_pos_2_mem_addr(int fd,int f_pos)
 {
-  int i,serial_num_buffer_table;
+  int i,serial_num_buffer_table,serial_num_buffer_table1,serial_num_buffer_table2,serial_num_buffer_table3;
   i=f_pos/BUFFER_SIZE;
-  if (i>6)
+  if (i<7)  //0th inode
   {
-    printk("error!f_pos_2_mem_addr:big file unsupported!\n");
+    serial_num_buffer_table=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,files_table[fd].f_m_inode->zone[i]);
+    if (serial_num_buffer_table==-1)
+      return NULL;
+    return (buffer_head_table[serial_num_buffer_table].p_data+f_pos%BUFFER_SIZE);
+  }
+  else if (i<519)  //1th inode
+  {
+    serial_num_buffer_table1=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,files_table[fd].f_m_inode->zone[7]);
+    if (serial_num_buffer_table1==-1)
+      return NULL;
+    serial_num_buffer_table2=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,*((unsigned short *)(buffer_head_table[serial_num_buffer_table1].p_data)+i-7));
+    buffer_head_table[serial_num_buffer_table1].bool_lock=(unsigned char)0;
+    if (serial_num_buffer_table2==-1)
+      return NULL;   
+    return (buffer_head_table[serial_num_buffer_table2].p_data+f_pos%BUFFER_SIZE);
+  }
+  else if (i<262663)
+  {
+    serial_num_buffer_table1=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,files_table[fd].f_m_inode->zone[8]);
+    if (serial_num_buffer_table1==-1)
+      return NULL;    
+    serial_num_buffer_table2=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,*((unsigned short *)(buffer_head_table[serial_num_buffer_table1].p_data)+(i-7)/512));
+    buffer_head_table[serial_num_buffer_table1].bool_lock=(unsigned char)0;
+    if (serial_num_buffer_table2==-1)
+      return NULL;   
+    serial_num_buffer_table3=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,*((unsigned short *)(buffer_head_table[serial_num_buffer_table2].p_data)+(i-7)%512));
+    buffer_head_table[serial_num_buffer_table2].bool_lock=(unsigned char)0;
+    if (serial_num_buffer_table3==-1)
+      return NULL;
+    return (buffer_head_table[serial_num_buffer_table3].p_data+f_pos%BUFFER_SIZE);
+  }
+  else
+  {
+    printk("error!f_pos_2_mem_addr:f_pos %d is too big!\n",f_pos);
     return NULL;
   }
-  serial_num_buffer_table=get_buffer_serial_num(files_table[fd].f_m_inode->i_dev_t,files_table[fd].f_m_inode->zone[i]);
-  if (serial_num_buffer_table==-1)
+}
+
+//remember to free this 4k phy_page!!!
+unsigned char * read_file_pos_1k(int fd,int f_pos)
+{
+  unsigned char * page_tmp;
+  unsigned char * file_tmp;
+  int count;
+  if ((page_tmp=phy_get_free_page())==NULL)
     return NULL;
-  return (buffer_head_table[serial_num_buffer_table].p_data+f_pos%BUFFER_SIZE);
+  if ((file_tmp=f_pos_2_mem_addr(fd,f_pos))==NULL)
+  {
+    printk("error!read_file_pos_1k:read file part1 failed!\n");
+    return NULL;
+  }
+  if ((unsigned long)file_tmp%1024==0)
+  {
+    mem_copyb(file_tmp,page_tmp,1024);
+    buffer_head_table[((unsigned long)file_tmp-(unsigned long)blk_buffer)/1024].bool_lock=(unsigned char)0;
+    return page_tmp;
+  }
+  else
+  {
+    count=(unsigned long)file_tmp%1024;
+    mem_copyb(file_tmp,page_tmp,1024-count);
+    buffer_head_table[((unsigned long)file_tmp-(unsigned long)blk_buffer)/1024].bool_lock=(unsigned char)0;
+    file_tmp=f_pos_2_mem_addr(fd,f_pos+1024-count);
+    if (file_tmp==NULL)
+    {
+      printk("error!read_file_pos_1k:read file part2 failed!\n");
+      phy_free_page(page_tmp);
+      return NULL;
+    }
+    mem_copyb(file_tmp,page_tmp+1024-count,count);
+    buffer_head_table[((unsigned long)file_tmp-(unsigned long)blk_buffer)/1024].bool_lock=(unsigned char)0;
+    return page_tmp;
+  }
 }

@@ -3,6 +3,7 @@
  *Main memory start from 1MB, in which ramdisk(1MB~3MB) and applications avaliable memory(3MB above)
 */
 #include "kernel.h"
+#include "tsk.h"
 
 //all bound to 4k
 #define RAMDISK 2*1024*1024
@@ -13,6 +14,7 @@
 #define MMAP_SIZE 2304 //1MB~10MB
 extern unsigned long TASK0;
 extern struct task_struct *p_tasks[];
+extern struct task_struct * current;
 
 /*
  *0xff means page(4k) unavaliable, 0x00 means page free, 0xN means page occupied by N linear addresses
@@ -37,7 +39,7 @@ unsigned char * phy_get_free_page()
   int i=RAMDISK/4096;
   while (i<MMAP_SIZE)
   {
-    if (mmap[i]==0)
+    if (mmap[i]==0)   
       break;
     else
       i++;
@@ -48,8 +50,7 @@ unsigned char * phy_get_free_page()
     return((unsigned char *)0);
   }
   mmap[i]=(unsigned char)1;
-  __asm__ volatile ("push %%es\n\t"
-		    "movl %%eax,%%edi\n\t"
+  __asm__ volatile ("movl %%eax,%%edi\n\t"
 		    "movl $0x10,%%eax\n\t"
 		    "mov  %%ax,%%es\n\t"
 		    "movl $1024,%%ecx\n\t"
@@ -57,7 +58,6 @@ unsigned char * phy_get_free_page()
 		    "xorl %%eax,%%eax\n\t"
 		    "rep\n\t"
 		    "stosl\n\t"
-		    "pop %%es"
 		    ::"a" (MAIN_MEM_START+(i<<12)));
   return ((unsigned char *)(MAIN_MEM_START+(i<<12)));
 }
@@ -81,26 +81,32 @@ void phy_free_page(unsigned char * phy_addr)
   mmap[i]--;
 }
 
-/*
-
-void put_page(unsigned char *phy_addr,unsigned char *line_addr)
+int put_page(unsigned char *phy_addr,unsigned char *line_addr,unsigned long cr3)
 {
-  unsigned int * tmp;
-  if (phy_addr & 0xfff !=0 || line_addr & 0xfff !=0)
-    printk("align warn: Try to put physical addr %x to linear addr %x\n",phy_addr,line_addr);
-  if (phy_addr < MAIN_MEM_START)
-    panic("Try to put kernel addr %x",phy_addr);
-  if (phy_addr >= APP_MEM_END)
-    panic("Try to put nonexistent addr %x",phy_addr);
-  tmp=(unsigned int *)((line_addr & 0xffc00000)>>20+PAGE_DIR);
-  if ((*tmp)&1)
-    tmp=(unsigned int *)(*tmp & 0xfffff000);
+  unsigned long * tmp;
+  if ((unsigned long)phy_addr & 0x3ff)
+  {
+    printk("error!put_page:phy_addr %x isn't aligned to 4k!\n",phy_addr);
+    return -1;
+  }
+  if ((unsigned long)line_addr & 0x3ff)
+  {
+    printk("error!put_page:line_addr %x isn't aligned to 4k!\n",line_addr);
+    return -1;    
+  }
+  if ((unsigned long)phy_addr < MAIN_MEM_START || (unsigned long)phy_addr > (APP_MEM_END-4096))
+  {
+    printk("error!put_page:phy_addr %x wrong!\n",phy_addr);
+    return -1;
+  }
+  tmp=(unsigned long *)cr3+((unsigned long)line_addr>>22);
+  if (*tmp & 1)
+    tmp=(unsigned long *)((*tmp)&0xfffff000) + (((unsigned long)line_addr>>12)&0x3ff);
   else
   {
-    *tmp=(unsigned int)(phy_get_free_page() | 7);
-    tmp=(unsigned int *)(*tmp & 0xfffff000);
+    *tmp=(unsigned long)phy_get_free_page() | 7;
+    tmp=(unsigned long *)((*tmp)&0xfffff000) + (((unsigned long)line_addr>>12)&0x3ff);
   }
-  *((line_addr & 0x3ff000)>>10+tmp)=(unsigned int)(phy_addr | 7);
+  *tmp=(unsigned long)phy_addr | 7;
+  return 0;
 }
-
-*/

@@ -126,10 +126,16 @@ jmp after_paging
 
 ##goto TSS_0
 after_paging:
+call clear_screen
 call init_mem
 call ramdisk_init
 call buffer_init
 call fs_init
+
+xorl %ecx,%ecx
+lea  p_tasks(,%ecx,4),%edi
+movl $TASK0,%eax
+movl %eax,(%edi)
 
 pushfl
 andl $0xffffbfff,(%esp)
@@ -225,7 +231,7 @@ pop   %fs
 pop   %es
 pop   %ds
 iret
-##system_int end 
+##system_int end
 
 .globl sys_fork
 sys_fork:
@@ -235,6 +241,14 @@ pushl %edi
 pushl %ebp
 call  copy_process
 addl  $16,%esp
+ret
+
+.globl sys_exec
+sys_exec:
+lea   32(%esp),%eax
+pushl %eax
+call  doo_execve
+addl  $4,%esp
 ret
 
 ##task0 start
@@ -290,11 +304,11 @@ init_stack:
 
 .globl TASK0
 TASK0:
-	.long 0,0,0,0			##state,pid,p_parent,p_child
+	.long 0,0,-1,0,0			##state,pid,exe_fd,p_parent,p_child
 ldt0:	
 	.value 0,0,0,0			##ldt[0]
-	.value 0x3ff,0,0xfa00,0x00c0	##ldt[1],code
-	.value 0x3ff,0,0xf200,0x00c0	##ldt[2],data
+	.value 0xffff,0,0xfa00,0x00cf	##ldt[1],code
+	.value 0xffff,0,0xf200,0x00cf	##ldt[2],data
 tss0:	
 	.long 0					##back link
 	.long stack0,0x10			##esp0,ss0
