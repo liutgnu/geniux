@@ -1,0 +1,12 @@
+to compile:
+1)make sure in 32-bit linux
+2)type the following command to compile:
+	make fakedisk
+
+to run, without sound:
+	qemu-system-i386 -m 8 -fda fakedisk
+
+to run, with sound:
+1)make sure qemu have been compiled with sound hardware Creative Sound Blaster 16 emulation
+2)type the following command to run:
+	qemu-system-i386 -m 8 -fda fakedisk -soundhw sb16
