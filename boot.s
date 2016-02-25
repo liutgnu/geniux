@@ -7,8 +7,8 @@ begbss:
 .text
 
 BOOTSEG = 0x07c0
-KERNELSEG = 0x0900
-SYSLEN = 30
+KERNELSEG = 0x1000
+SYSLEN = 70
 
 entry start
 start:
@@ -33,12 +33,7 @@ error: jmp error
 print_msg:
 mov ax,cs
 mov es,ax
-mov cx,#20
-mov dx,#0x1004
-mov bx,#0x000c
-mov bp,#msgl
-mov ax,#0x1301
-int 0x10
+mov bp,#msgl 	!keep those
 
 !source,ds:si dis,es:di 
 cli
@@ -48,9 +43,9 @@ xor ax,ax
 mov es,ax
 mov si,ax
 mov di,ax
-mov cx,#0x3000
+mov cx,#0x2280	!value keep small
 rep
-movw
+movsd
 
 mov ax,#BOOTSEG
 mov ds,ax
@@ -60,7 +55,7 @@ lgdt gdt_opcode
 mov ax,#0x0001
 lmsw ax
 
-jmpi 0,8
+jmpi 0x38,8
 
 gdt:
 	.word 0,0,0,0
