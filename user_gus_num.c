@@ -37,6 +37,7 @@ void task1()
 	int i,j;
 	int cont_a,cont_b;
 	int z=83;  //start from 83. 80+'G'+'O'+'|'
+	sound();
 	get_random_num();
 	for (loop_num=0;loop_num<15;loop_num++)
 	{
@@ -75,4 +76,3 @@ void task1()
 		z=z+5;
 	}
 }
-

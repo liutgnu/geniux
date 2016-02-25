@@ -5,10 +5,12 @@
 //int sys_input();	//0 
 //int sys_print();	//1
 //int sys_utime();	//2
+//int sys_sound();	//3
 
 #include "tsk.h"
 #include "varible.h"
 extern char keyboard_mid();
+extern void play_sound();
 
 int sys_input()
 {
@@ -23,6 +25,12 @@ __asm__ volatile ("movl $0x18,%%edx\n\t"
 		"movb %%al,%%gs:(%%ebx)"
 		::"a" (ch),"b" (position));
 return 0;
+}
+
+int sys_sound()
+{
+	play_sound();
+	return 0;
 }
 
 int sys_utime()
@@ -77,4 +85,11 @@ int time_s()
 		:"=a" (tmp)
 		:"a" (int_num));
 	return (tmp/100);
+}
+
+void sound()
+{
+	int int_num=3;
+	__asm__ ("int $0x80"
+		::"a" (int_num));
 }

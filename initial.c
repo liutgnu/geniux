@@ -12,7 +12,7 @@ char *keyboard_buf_tail;
 
 //note! struct must be valued when initializing
 struct task_struct task[TASK_QUATITY]={{0,0},{0,1}};//task[0] print time,task[1] guess num
-f_int syscall_table[]={sys_input,sys_print,sys_utime};
+f_int syscall_table[]={sys_input,sys_print,sys_utime,sys_sound};
 
 void init_varibles(void)  //initial variables
 {

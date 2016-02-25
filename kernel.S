@@ -54,13 +54,22 @@ movl %eax,(%edi)
 movl %edx,4(%edi)
 
 movl $0x00080000,%eax
+mov  $sb16_DSP_int,%ax
+xorl %edx,%edx
+movl $0xef00,%edx
+movl $0x0d,%ecx
+lea  idt(,%ecx,8),%edi
+movl %eax,(%edi)
+movl %edx,4(%edi)
+
+movl $0x00080000,%eax
 mov  $system_int,%ax
 xorl %edx,%edx
 movl $0xef00,%edx
 movl $0x080,%ecx
 lea  idt(,%ecx,8),%edi
 movl %eax,(%edi)
-movl %edx,4(%edi)
+movl %edx,4(%edi)	
 
 lidt lidt_opcode
 
@@ -205,6 +214,109 @@ delay:
 D1:     jmp D2
 D2:	ret 
 ##keyboard_interrupt end
+
+##sb16_DSP_int start
+##maybe we need to mask DSP_int??
+
+#define DSP_BASE 0x220
+#define DMA_BUF_LENGTH 0x1000
+
+sb16_DSP_int:
+pushl %eax
+pushl %ebx
+pushl %ecx
+pushl %edx
+push  %ds
+push  %es
+movl  $0x10,%eax
+mov   %ax,%ds
+mov   %ax,%es
+
+movw  $DSP_BASE,%dx
+addb  $4,%dl
+movb  $0x82,%al		#interrupt status reg
+outb  %al,%dx
+call  delay_DSP
+addb  $1,%dl
+inb   %dx,%al
+call  delay_DSP
+
+andb  $7,%al
+cmpb  $1,%al
+jne   exit_DSP_int	#not correct interrupt 
+
+call  renew_buf		#eax return value
+			#when renew_buf have parameters,change the POP routine!!!
+cmpl  $0,%eax
+je    tran_fin		#transfer finished
+
+cmpl  $1,%eax		#transfer unfinished
+je    tran_unfin
+
+jmp   exit_DSP_int	#others
+
+tran_fin:
+movw  $DSP_BASE,%dx	##off speaker
+addb  $0x0c,%dl
+1:
+inb   %dx,%al
+orb   %al,%al
+js    1b
+movb  $0xd3,%al
+outb  %al,%dx
+jmp   exit_DSP_int
+
+tran_unfin:
+call  setup_DMA
+movw  $DSP_BASE,%dx		##start_DSP_SingleInit
+movw  $DMA_BUF_LENGTH,%bx
+dec   %bx
+addb  $0x0c,%dl
+1:
+inb   %dx,%al
+orb   %al,%al
+js    1b
+movb  $0x14,%al
+outb  %al,%dx
+1:
+inb   %dx,%al
+orb   %al,%al
+js    1b
+movb  %bl,%al
+outb  %al,%dx
+1:
+inb   %dx,%al
+orb   %al,%al
+js    1b
+movb  %bh,%al
+outb  %al,%dx
+
+exit_DSP_int:
+movw  $DSP_BASE,%dx	#acknowlegde
+addb  $0xe,%dl
+inb   %dx,%al
+outb  %al,%dx
+addb  $1,%dl
+inb   %dx,%al
+outb  %al,%dx
+
+movb  $0x20,%al
+outb  %al,$0x20		#EOI
+
+pop   %es
+pop   %ds
+popl  %edx
+popl  %ecx
+popl  %ebx
+popl  %eax
+iret
+
+delay_DSP:
+jmp   1f
+1:jmp 1f
+1:jmp 1f
+1:ret
+##sb16_DSP_int end
 
 ##system_int
 ##eax sys_call num, ebx first parameter, ecx second, edx third
