@@ -28,6 +28,5 @@ Image:final.bin boot
 fakedisk:Image minix.img
 	dd if=Image of=fakedisk
 	dd if=minix.img of=fakedisk bs=512 seek=201 count=100
-	cp fakedisk ../devel/
 clean: 
 	rm -f $(objects) system Image boot boot.o kernel.o page.o final.bin system.map
