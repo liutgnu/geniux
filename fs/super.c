@@ -1,8 +1,8 @@
 /*
  *This file deals with super zone
 */
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 extern int get_buffer_serial_num(unsigned int dev_t,int nth_zone);
 extern struct buffer_head buffer_head_table[BUFFER_QUANTITY];
 

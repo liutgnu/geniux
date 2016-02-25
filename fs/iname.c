@@ -1,8 +1,8 @@
 /*
 *this file deals with inode directory and file name, sounds fun!
 */
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 
 extern inline int get_m_super(unsigned int dev_t);
 extern int get_buffer_serial_num(unsigned int dev_t,int nth_zone);

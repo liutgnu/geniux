@@ -2,8 +2,8 @@
  *This file deals with files
  *NOTE! since our file system is very weak, i try to make fs as small as possible. some features of minix fs are not implemented!!!
 */
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 #define mem_copyb(src_addr,dst_addr,byte_count)  \
 	__asm__ ("mov %%ds,%%bx\n\t"  \
 		"mov %%es,%%dx\n\t"  \
@@ -81,6 +81,13 @@ int close_file(int fd)
   }
   files_table[fd].f_m_inode->i_occupy_num--;
   return 0;
+}
+
+int size_file(int fd)
+{
+  if (fd<0 || fd>MAX_SYS_FILE)
+    return -1;
+  return((int)files_table[fd].f_m_inode->size_file);
 }
 
 //NOTE:here buffer_size must NOT be greater than BUFFER_SIZE

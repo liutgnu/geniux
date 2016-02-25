@@ -15,7 +15,7 @@
   }\
 }
 */
-#include "tsk.h"
+#include <kernel/tsk.h>
 
 extern struct task_struct * current;
 extern struct task_struct * p_tasks[];

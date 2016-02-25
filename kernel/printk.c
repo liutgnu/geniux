@@ -1,4 +1,4 @@
-#include "stdarg.h"
+#include <kernel/stdarg.h>
 //a long string should be less than 500, end with '\0'
 #define CONSOLE_BUF_LENGTH 500
 //display size:80*25
@@ -10,7 +10,7 @@ int console_buf_full_carry=0;
 int console_buf_crisis=0;
 //since the first 3 lines used by user_pnt_time and user_gus_num, printk takes over the 4th line and below
 int cursor_x=0;
-int cursor_y=3;
+int cursor_y=13;
 extern int sys_print();
 
 /*
@@ -76,14 +76,20 @@ void number(int num,int base)
   char char_tmp;
   int i=0;
   int j=0;
-  while (num!=0)
+
+  if (num==0)
+    tmp[i++]='0';
+  else
   {
-    char_tmp=num%base+48;
-    if (char_tmp >=58)
-      tmp[i++]=char_tmp+7;
-    else
-      tmp[i++]=char_tmp;
-    num=num/base;
+    while (num!=0)
+    {
+      char_tmp=num%base+48;
+      if (char_tmp >=58)
+        tmp[i++]=char_tmp+7;
+      else
+        tmp[i++]=char_tmp;
+      num=num/base;
+    }
   }
   i--;
   while (i>=0)
@@ -177,8 +183,15 @@ int printk(char *fmt, ...)
       cursor_y++;
     }
     if (cursor_y==25)
-      cursor_y=3;
+      cursor_y=13;
     out_cont++;
   }
   return out_cont;   //number of chars output
+}
+
+void clear_screen(){
+  int i;
+  for (i=0;i<2000;i++){
+    sys_print((char)0,i);
+  }
 }

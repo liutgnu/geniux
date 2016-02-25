@@ -1,8 +1,8 @@
 /*
  *This file deals with zone map
 */
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 
 extern inline int get_m_super(unsigned int dev_t);
 extern struct buffer_head buffer_head_table[BUFFER_QUANTITY];

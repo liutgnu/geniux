@@ -1,5 +1,5 @@
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 extern int read_d2m_super(unsigned int dev_t);
 
 void fs_init()

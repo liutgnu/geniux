@@ -1,8 +1,8 @@
 /*
  *This file deals with inode
 */
-#include "fs.h"
-#include "kernel.h"
+#include <fs/fs.h>
+#include <kernel/kernel.h>
 
 extern struct m_super super_table[MAX_FS];
 extern int get_buffer_serial_num(unsigned int dev_t,int nth_zone);

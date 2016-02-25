@@ -1,4 +1,4 @@
-#include "tsk.h"
+#include <kernel/tsk.h>
 #define TASK_QUATITY 64  //pid ranges from 0~63
 #define MAIN_MEM_START 0x100000
 /*byte_count is 2^n*/

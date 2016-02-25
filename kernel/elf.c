@@ -1,5 +1,5 @@
-#include "elf.h"
-#include "tsk.h"
+#include <kernel/elf.h>
+#include <kernel/tsk.h>
 #define NULL (void *)0
 #define mem_copyb(src_addr,dst_addr,byte_count)  \
 	__asm__ ("mov %%ds,%%bx\n\t"  \
@@ -115,7 +115,6 @@ int load_segment(unsigned long virtaddr,int fd,unsigned long cr3)
   }
   if (i==program_segment_num)
   {
-    printk("load_segment:no appropriate segment found in this elf!\n");
     phy_free_page((unsigned char *)file_tmp1);
     return -1;
   }

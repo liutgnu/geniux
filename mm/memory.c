@@ -2,8 +2,8 @@
  *This file contains low functions of memory control, basicly operate on one page(4k), higher functions are not contained.
  *Main memory start from 1MB, in which ramdisk(1MB~3MB) and applications avaliable memory(3MB above)
 */
-#include "kernel.h"
-#include "tsk.h"
+#include <kernel/kernel.h>
+#include <kernel/tsk.h>
 
 //all bound to 4k
 #define RAMDISK 2*1024*1024

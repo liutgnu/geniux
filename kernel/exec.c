@@ -1,5 +1,5 @@
-#include "elf.h"
-#include "tsk.h"
+#include <kernel/elf.h>
+#include <kernel/tsk.h>
 #define NULL (void *)0
 extern struct task_struct * current;
 int doo_execve(unsigned long * eip,unsigned long none,unsigned long * filename)
@@ -20,7 +20,7 @@ int doo_execve(unsigned long * eip,unsigned long none,unsigned long * filename)
     printk("error!do_execve:no memory for stack!\n");
     return -1;
   }
-  if ((exe_fd=open(filename))==-1)
+  if ((exe_fd=open_file(filename))==-1)
   {
     printk("error!do_execve:can't open elf file!\n");
     return -1;
