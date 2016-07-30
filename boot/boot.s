@@ -75,6 +75,10 @@ mov ax,#0xc00
 mov offset,ax
 call load
 
+!on_A20
+mov ax,#0x2401
+int 0x15
+
 !source,ds:si des,es:di
 mov ax,#0x07c0
 mov ds,ax
@@ -107,8 +111,8 @@ mov ax,cs
 mov ds,ax
 mov es,ax
 
-on_A20:
-in al,#0xee
+!on_A20:
+!in al,#0xee
 
 cli
 lidt idt_opcode

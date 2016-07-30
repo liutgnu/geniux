@@ -1,0 +1,449 @@
+
+Allocating common symbols
+Common symbol       size              file
+
+p_buffer_using      0x4               fs/fs.o
+dev_t               0x4               fs/fs.o
+console_buf         0x1f4             kernel/geniux.o
+
+Discarded input sections
+
+ .note.GNU-stack
+                0x0000000000000000        0x0 kernel/geniux.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 fs/fs.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 mm/mm.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+Address of section .text set to 0x0
+LOAD kernel/geniux.o
+LOAD fs/fs.o
+LOAD mm/mm.o
+                0x0000000008048000                PROVIDE (__executable_start, 0x8048000)
+                0x0000000008048094                . = (0x8048000 + SIZEOF_HEADERS)
+
+.interp
+ *(.interp)
+
+.note.gnu.build-id
+ *(.note.gnu.build-id)
+
+.hash
+ *(.hash)
+
+.gnu.hash
+ *(.gnu.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.dyn        0x0000000008048094        0x0
+ *(.rel.init)
+ *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
+ .rel.text      0x0000000008048094        0x0 kernel/geniux.o
+ *(.rel.fini)
+ *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
+ *(.rel.data.rel.ro .rel.data.rel.ro.* .rel.gnu.linkonce.d.rel.ro.*)
+ *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
+ .rel.data      0x0000000008048094        0x0 kernel/geniux.o
+ *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
+ *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
+ *(.rel.ctors)
+ *(.rel.dtors)
+ *(.rel.got)
+ *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
+ *(.rel.ifunc)
+
+.rel.plt        0x0000000008048094        0x0
+ *(.rel.plt)
+                0x0000000008048094                PROVIDE (__rel_iplt_start, .)
+ *(.rel.iplt)
+ .rel.iplt      0x0000000008048094        0x0 kernel/geniux.o
+                0x0000000008048094                PROVIDE (__rel_iplt_end, .)
+
+.init
+ *(SORT(.init))
+
+.plt            0x00000000080480a0        0x0
+ *(.plt)
+ *(.iplt)
+ .iplt          0x00000000080480a0        0x0 kernel/geniux.o
+
+.text           0x0000000000000000     0x97a5
+ *(.text.unlikely .text.*_unlikely .text.unlikely.*)
+ *(.text.exit .text.exit.*)
+ *(.text.startup .text.startup.*)
+ *(.text.hot .text.hot.*)
+ *(.text .stub .text.* .gnu.linkonce.t.*)
+ .text          0x0000000000000000     0x71dc kernel/geniux.o
+                0x0000000000000000                _start
+                0x000000000000310e                sys_fork
+                0x000000000000311c                sys_exec
+                0x000000000000312a                jiffies
+                0x000000000000312e                current
+                0x0000000000003132                gdt_addr
+                0x0000000000004d68                TASK0
+                0x0000000000005d68                load_segment
+                0x0000000000006112                do_no_page
+                0x000000000000618a                doo_execve
+                0x00000000000063ad                find_empty_task
+                0x0000000000006461                copy_process
+                0x000000000000672e                copy_tables_pages
+                0x00000000000068c6                share_pages_dommap
+                0x0000000000006952                share_pages_nommap
+                0x00000000000069b1                do_page_wprotected
+                0x0000000000006a9d                panic
+                0x0000000000006ab8                console_buf_insert
+                0x0000000000006b4f                console_buf_del
+                0x0000000000006bda                number
+                0x0000000000006cb7                printk
+                0x0000000000006ed5                clear_screen
+                0x0000000000006f04                schedule
+                0x0000000000006f9d                sys_print
+                0x0000000000006fd0                sys_utime
+                0x0000000000006fda                sys_open
+                0x0000000000006ff0                sys_close
+                0x0000000000007006                sys_read
+                0x0000000000007022                sys_fsize
+                0x0000000000007038                fork
+                0x0000000000007052                print_XY
+                0x000000000000708d                print_Z
+                0x00000000000070b6                time_ms
+                0x00000000000070d0                time_s
+                0x00000000000070ff                open
+                0x0000000000007123                close
+                0x0000000000007147                read
+                0x000000000000716f                exe
+                0x0000000000007193                fsize
+                0x00000000000071b7                task0
+ .text          0x00000000000071dc     0x229e fs/fs.o
+                0x00000000000071dc                buffer_init
+                0x000000000000731c                get_empty_buffer_head
+                0x0000000000007445                get_buffer_serial_num
+                0x00000000000075fc                read_blk_device
+                0x000000000000762a                write_blk_device
+                0x0000000000007658                fs_init
+                0x000000000000768a                cmp_string
+                0x0000000000007705                fname_2_inode
+                0x0000000000007753                inode_2_fname
+                0x00000000000077a3                inode_prev2next
+                0x0000000000007946                get_absolute_dir_file
+                0x0000000000007ab4                init_ramdisk
+                0x0000000000007aea                read_ramdisk
+                0x0000000000007b4e                write_ramdisk
+                0x0000000000007bb2                ramdisk_init
+                0x0000000000007be8                read_zmap_status
+                0x0000000000007cd1                write_zmap_status
+                0x0000000000007e06                get_free_zmap
+                0x0000000000007f49                get_empty_file_table
+                0x0000000000007fcb                open_file
+                0x00000000000080b4                close_file
+                0x000000000000814c                size_file
+                0x000000000000817a                read_file
+                0x0000000000008443                f_pos_2_mem_addr
+                0x0000000000008739                read_file_pos_1k
+                0x00000000000088c6                read_imap_status
+                0x000000000000897b                write_imap_status
+                0x0000000000008a7c                get_free_imap
+                0x0000000000008bac                write_m2d_inode
+                0x0000000000008de7                get_inode
+                0x000000000000910f                get_d_super
+                0x000000000000913a                get_m_super
+                0x0000000000009184                read_d2m_super
+                0x00000000000092f6                write_m2d_super
+                0x000000000000943f                del_m_super
+ .text          0x000000000000947a      0x32b mm/mm.o
+                0x000000000000947a                init_mem
+                0x0000000000009519                phy_get_free_page
+                0x000000000000959d                phy_free_page
+                0x000000000000964b                put_page
+                0x000000000000976e                page_fault
+ *(.gnu.warning)
+
+.fini
+ *(SORT(.fini))
+                0x00000000000097a5                PROVIDE (__etext, .)
+                0x00000000000097a5                PROVIDE (_etext, .)
+                0x00000000000097a5                PROVIDE (etext, .)
+
+.rodata         0x00000000000097a8      0x663
+ *(.rodata .rodata.* .gnu.linkonce.r.*)
+ .rodata        0x00000000000097a8      0x2fa kernel/geniux.o
+ *fill*         0x0000000000009aa2        0x2 
+ .rodata        0x0000000000009aa4      0x23c fs/fs.o
+ .rodata        0x0000000000009ce0      0x12b mm/mm.o
+
+.rodata1
+ *(.rodata1)
+
+.eh_frame_hdr
+ *(.eh_frame_hdr)
+
+.eh_frame       0x0000000000009e0c      0x9b4
+ *(.eh_frame)
+ .eh_frame      0x0000000000009e0c      0x47c kernel/geniux.o
+                                        0x53c (size before relaxing)
+ .eh_frame      0x000000000000a288      0x4b8 fs/fs.o
+                                        0x590 (size before relaxing)
+ .eh_frame      0x000000000000a740       0x80 mm/mm.o
+                                         0x98 (size before relaxing)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+                0x000000000000a7c0                . = (ALIGN (0x1000) - ((0x1000 - .) & 0xfff))
+                0x000000000000c000                . = DATA_SEGMENT_ALIGN (0x1000, 0x1000)
+
+.eh_frame
+ *(.eh_frame)
+
+.gcc_except_table
+ *(.gcc_except_table .gcc_except_table.*)
+
+.exception_ranges
+ *(.exception_ranges .exception_ranges*)
+
+.tdata
+ *(.tdata .tdata.* .gnu.linkonce.td.*)
+
+.tbss
+ *(.tbss .tbss.* .gnu.linkonce.tb.*)
+ *(.tcommon)
+
+.preinit_array  0x000000000000c000        0x0
+                0x000000000000c000                PROVIDE (__preinit_array_start, .)
+ *(.preinit_array)
+                0x000000000000c000                PROVIDE (__preinit_array_end, .)
+
+.init_array     0x000000000000c000        0x0
+                0x000000000000c000                PROVIDE (__init_array_start, .)
+ *(SORT(.init_array.*) SORT(.ctors.*))
+ *(.init_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .ctors)
+                0x000000000000c000                PROVIDE (__init_array_end, .)
+
+.fini_array     0x000000000000c000        0x0
+                0x000000000000c000                PROVIDE (__fini_array_start, .)
+ *(SORT(.fini_array.*) SORT(.dtors.*))
+ *(.fini_array EXCLUDE_FILE(*crtend?.o *crtend.o *crtbegin?.o *crtbegin.o) .dtors)
+                0x000000000000c000                PROVIDE (__fini_array_end, .)
+
+.ctors
+ *crtbegin.o(.ctors)
+ *crtbegin?.o(.ctors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .ctors)
+ *(SORT(.ctors.*))
+ *(.ctors)
+
+.dtors
+ *crtbegin.o(.dtors)
+ *crtbegin?.o(.dtors)
+ *(EXCLUDE_FILE(*crtend?.o *crtend.o) .dtors)
+ *(SORT(.dtors.*))
+ *(.dtors)
+
+.jcr
+ *(.jcr)
+
+.data.rel.ro
+ *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*)
+ *(.data.rel.ro .data.rel.ro.* .gnu.linkonce.d.rel.ro.*)
+
+.dynamic
+ *(.dynamic)
+
+.got
+ *(.got)
+ *(.igot)
+                0x000000000000c000                . = DATA_SEGMENT_RELRO_END (., (SIZEOF (.got.plt) >= 0xc)?0xc:0x0)
+
+.got.plt        0x000000000000c000        0x0
+ *(.got.plt)
+ *(.igot.plt)
+ .igot.plt      0x000000000000c000        0x0 kernel/geniux.o
+
+.data           0x000000000000c000       0x40
+ *(.data .data.* .gnu.linkonce.d.*)
+ .data          0x000000000000c000       0x40 kernel/geniux.o
+                0x000000000000c000                t_map
+                0x000000000000c008                console_buf_head
+                0x000000000000c00c                console_buf_tail
+                0x000000000000c010                cursor_y
+                0x000000000000c020                syscall_table
+ .data          0x000000000000c040        0x0 fs/fs.o
+ .data          0x000000000000c040        0x0 mm/mm.o
+
+.data1
+ *(.data1)
+                0x000000000000c040                _edata = .
+                0x000000000000c040                PROVIDE (edata, .)
+                0x000000000000c040                . = .
+                0x000000000000c040                __bss_start = .
+
+.bss            0x000000000000c040     0x665c
+ *(.dynbss)
+ *(.bss .bss.* .gnu.linkonce.b.*)
+ .bss           0x000000000000c040      0x10c kernel/geniux.o
+                0x000000000000c040                p_tasks
+                0x000000000000c140                console_buf_full_carry
+                0x000000000000c144                console_buf_crisis
+                0x000000000000c148                cursor_x
+ *fill*         0x000000000000c14c       0x14 
+ .bss           0x000000000000c160     0x5a40 fs/fs.o
+                0x000000000000c160                blk_buffer
+                0x0000000000011160                buffer_head_table
+                0x00000000000112a0                buffer_head_sequence_table
+                0x00000000000113a0                files_table
+                0x00000000000116a0                inodes_table
+                0x0000000000011a60                super_table
+ .bss           0x0000000000011ba0      0x900 mm/mm.o
+                0x0000000000011ba0                mmap
+ *(COMMON)
+ COMMON         0x00000000000124a0      0x1f4 kernel/geniux.o
+                0x00000000000124a0                console_buf
+ COMMON         0x0000000000012694        0x8 fs/fs.o
+                0x0000000000012694                p_buffer_using
+                0x0000000000012698                dev_t
+                0x000000000001269c                . = ALIGN ((. != 0x0)?0x4:0x1)
+                0x000000000001269c                . = ALIGN (0x4)
+                0x000000000001269c                . = SEGMENT_START ("ldata-segment", .)
+                0x000000000001269c                . = ALIGN (0x4)
+                0x000000000001269c                _end = .
+                0x000000000001269c                PROVIDE (end, .)
+                0x000000000001269c                . = DATA_SEGMENT_END (.)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x2c
+ *(.comment)
+ .comment       0x0000000000000000       0x2c kernel/geniux.o
+                                        0x195 (size before relaxing)
+ .comment       0x000000000000002c      0x195 fs/fs.o
+ .comment       0x000000000000002c       0x2d mm/mm.o
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges  0x0000000000000000      0x2a0
+ *(.debug_aranges)
+ .debug_aranges
+                0x0000000000000000      0x140 kernel/geniux.o
+ .debug_aranges
+                0x0000000000000140      0x120 fs/fs.o
+ .debug_aranges
+                0x0000000000000260       0x40 mm/mm.o
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info     0x0000000000000000     0x3bfa
+ *(.debug_info .gnu.linkonce.wi.*)
+ .debug_info    0x0000000000000000     0x1ba9 kernel/geniux.o
+ .debug_info    0x0000000000001ba9     0x1cb3 fs/fs.o
+ .debug_info    0x000000000000385c      0x39e mm/mm.o
+
+.debug_abbrev   0x0000000000000000     0x11e0
+ *(.debug_abbrev)
+ .debug_abbrev  0x0000000000000000      0x87f kernel/geniux.o
+ .debug_abbrev  0x000000000000087f      0x816 fs/fs.o
+ .debug_abbrev  0x0000000000001095      0x14b mm/mm.o
+
+.debug_line     0x0000000000000000      0xe83
+ *(.debug_line .debug_line.* .debug_line_end)
+ .debug_line    0x0000000000000000      0x65a kernel/geniux.o
+ .debug_line    0x000000000000065a      0x719 fs/fs.o
+ .debug_line    0x0000000000000d73      0x110 mm/mm.o
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str      0x0000000000000000      0xba1
+ *(.debug_str)
+ .debug_str     0x0000000000000000      0x602 kernel/geniux.o
+                                        0xe33 (size before relaxing)
+ .debug_str     0x0000000000000602      0x55f fs/fs.o
+                                       0x1474 (size before relaxing)
+ .debug_str     0x0000000000000b61       0x40 mm/mm.o
+                                        0x1a6 (size before relaxing)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_macro
+ *(.debug_macro)
+
+.gnu.attributes
+ *(.gnu.attributes)
+
+/DISCARD/
+ *(.note.GNU-stack)
+ *(.gnu_debuglink)
+ *(.gnu.lto_*)
+ *(.gnu_object_only)
+OUTPUT(system elf32-i386)
