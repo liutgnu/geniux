@@ -9,7 +9,7 @@ extern struct buffer_head buffer_head_table[BUFFER_QUANTITY];
 struct m_super super_table[MAX_FS]={{0,},};
 
 //returns serial_num in buffer_head_table
-inline int get_d_super(unsigned int dev_t)
+int get_d_super(unsigned int dev_t)
 {
   int n_tmp;
   if ((n_tmp=get_buffer_serial_num(dev_t,1))==-1)
@@ -18,7 +18,7 @@ inline int get_d_super(unsigned int dev_t)
 }
 
 //returns serial_num in super_table
-inline int get_m_super(unsigned int dev_t)
+int get_m_super(unsigned int dev_t)
 {
   int n_tmp;
   for (n_tmp=0;n_tmp<MAX_FS;n_tmp++)

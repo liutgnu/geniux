@@ -6,8 +6,8 @@ struct buffer_head_sequence buffer_head_sequence_table[BUFFER_QUANTITY]={{0,},};
 
 struct buffer_head_sequence * p_buffer_using;
 
-extern inline read_ramdisk(int nth_zone,int zone_size,unsigned char * p_dest);
-extern inline write_ramdisk(int nth_zone,int zone_size,unsigned char * p_src);
+extern int read_ramdisk(int nth_zone,int zone_size,unsigned char * p_dest);
+extern int write_ramdisk(int nth_zone,int zone_size,unsigned char * p_src);
 int read_blk_device(unsigned int dev_t,int nth_zone,int zone_size,unsigned char * p_dest);
 int write_blk_device(unsigned int dev_t,int nth_zone,int zone_size,unsigned char * p_src);
 

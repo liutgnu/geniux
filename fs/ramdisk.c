@@ -31,7 +31,7 @@ void init_ramdisk()
 /********************************************************************************
  *                               ramdisk I/O                                    *
  *******************************************************************************/
-inline int read_ramdisk(int nth_zone,int zone_size,unsigned char * p_dest)
+int read_ramdisk(int nth_zone,int zone_size,unsigned char * p_dest)
 {
   if (zone_size*(nth_zone+1)>RAMDISK)
     return -1;
@@ -42,7 +42,7 @@ inline int read_ramdisk(int nth_zone,int zone_size,unsigned char * p_dest)
   }
 }
 
-inline int write_ramdisk(int nth_zone,int zone_size,unsigned char * p_src)
+int write_ramdisk(int nth_zone,int zone_size,unsigned char * p_src)
 {
   if (zone_size*(nth_zone+1)>RAMDISK)
     return -1;

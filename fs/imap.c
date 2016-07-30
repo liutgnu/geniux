@@ -6,7 +6,7 @@
 
 extern int get_buffer_serial_num(unsigned int dev_t,int nth_zone);
 extern struct buffer_head buffer_head_table[BUFFER_QUANTITY];
-extern inline get_m_super(unsigned int dev_t);
+extern int get_m_super(unsigned int dev_t);
 extern struct m_super super_table[MAX_FS];
 
 //returns nth inode's imap status(0 or 1)

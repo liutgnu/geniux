@@ -9,7 +9,7 @@ extern int get_buffer_serial_num(unsigned int dev_t,int nth_zone);
 extern struct buffer_head buffer_head_table[BUFFER_QUANTITY];
 extern struct m_inode inodes_table[MAX_INODES];
 extern int write_m2d_inode(int serial_num_inodes_table);
-extern inline int get_m_super(unsigned int dev_t);
+extern int get_m_super(unsigned int dev_t);
 
 struct m_inode inodes_table[MAX_INODES]={{0,},};
 
