@@ -22,7 +22,7 @@ Actually the kernel powers an interpreter, which runs in the user space and inte
 
 The source code of the interpreter is located at /app and the assembly-language-like script is stored in /fs/minix.img, a MINIX file system image.If you want to modify the script, you may type the following command:
 
-	sudo mount minix.img /mnt
+	sudo mount fs/minix.img /mnt
 	vi /mnt/source/source.s
 
 The script now prints the Fibonacci sequence. Details about interpreter and assembly-language-like script can be found in [https://github.com/liutgnu/asm-interpreter](https://github.com/liutgnu/asm-interpreter)
