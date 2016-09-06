@@ -48,7 +48,7 @@ depending on the version of qemu installed on your computer. Of course you have 
 
 Once you have booted into geniux, you should see a window like this, which indicates geniux is running successfully.
 
-![screenshot](https://github.com/liutgnu/geniux/blob/master/screenshot.png)
+![screenshot](https://github.com/liutgnu/geniux/blob/master/pictures/screenshot.png)
 
 Figure 1: Screen shot of geniux
 
@@ -65,7 +65,7 @@ Geniux kernel is a monolithic kernel, I mainly referred to [fake-linux-0.00](htt
 
 As for IBM compatible computers, there is POST(Power-on self-test) right after powered on. I don't plan to go too far on this, in short, there are a series of testing and initial sequences. After these, BIOS(Basic Input Output System) load the boot sector(512 Bytes) into memory started at address 0x7c00 and jump to that address, this is the very place our system starts. As for geniux, boot sector is the first 512 bytes of geniux.img. Figure 1 shows the map of geniux.img.
 
-![Map_of_geniux.img.png](https://github.com/liutgnu/geniux/blob/master/Map_of_geniux.img.png)
+![Map_of_geniux.img.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_geniux.img.png)
 
 Figure 1: Map of geniux.img
 
@@ -82,7 +82,7 @@ In real mode of CPU, and in purpose of no damage on BIOS area, the size of avail
 
 BIOS loads boot sector to memory address 0x7c00:
 
-![Map_of_memory_step_1.png](https://github.com/liutgnu/geniux/blob/master/Map_of_memory_step_1.png)
+![Map_of_memory_step_1.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_1.png)
 
 Figure 2: Map of memory, step 1
 
@@ -90,7 +90,7 @@ Figure 2: Map of memory, step 1
 
 Boot sector program copies itself to memory address 0x9dc00(631k), then continues itself from the new address:
 
-![Map_of_memory_step_2.png](https://github.com/liutgnu/geniux/blob/master/Map_of_memory_step_2.png)
+![Map_of_memory_step_2.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_2.png)
 
 Figure 3: Map of memory, step 2
 
@@ -98,7 +98,7 @@ Figure 3: Map of memory, step 2
 
 Use BIOS services to get extended memory size, load kernel from floppy disk to memory address 0x7c00 and minix file system to memory address 0x20c00:
 
-![Map_of_memory_step_3.png](https://github.com/liutgnu/geniux/blob/master/Map_of_memory_step_3.png)
+![Map_of_memory_step_3.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_3.png)
 
 Figure 4: Map of memory, step 3
 
@@ -106,7 +106,7 @@ Figure 4: Map of memory, step 3
 
 BIOS services are no longer needed, so we move kernel and file system to memory address 0:
 
-![Map_of_memory_step_4.png](https://github.com/liutgnu/geniux/blob/master/Map_of_memory_step_4.png)
+![Map_of_memory_step_4.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_4.png)
 
 Figure 5: Map of memory, step 4
 
@@ -118,7 +118,7 @@ Set up gdt and ldt, switch CPU mode to protected mode, jump to kernel entry and 
 
 Kernel.s is the main kernel, I mainly referred to a [fake-linux-0.00's](http://oldlinux.org/Linux.old/kernel/0.00/linux-0.00-041217.tar.gz) head.s to build. Its structure is very simple:
 
-![Structure_of_kernel.s.png](https://github.com/liutgnu/geniux/blob/master/Structure_of_kernel.s.png)
+![Structure_of_kernel.s.png](https://github.com/liutgnu/geniux/blob/master/pictures/Structure_of_kernel.s.png)
 
 Figure 6: Structure of kernel.s
 
@@ -136,7 +136,7 @@ The following 4 parts will discuss those parts in detail.
 
 The maximum process quantity is 64, timer interrupts in every 10ms, which invokes the process scheduling routing. Since the system is very simple, there is no task priorities, so scheduling is implemented by judging whether a task status is ready, then switch to the ready-status task.
 
-![Process_scheduling.png](https://github.com/liutgnu/geniux/blob/master/Process_scheduling.png)
+![Process_scheduling.png](https://github.com/liutgnu/geniux/blob/master/pictures/Process_scheduling.png)
 
 Figure 7: Process scheduling
 
@@ -149,13 +149,13 @@ Task 0 is created by hand (tss, ldt, gdt are done manually, see kernel.s), then 
 
 In geniux, physical addresses 1MB\~3MB are reserved for ramdisk, 3MB above are dynamically allocated memory area for applications.
 
-![Physical_memory_map.png](https://github.com/liutgnu/geniux/blob/master/Physical_memory_map.png)
+![Physical_memory_map.png](https://github.com/liutgnu/geniux/blob/master/pictures/Physical_memory_map.png)
 
 Figure 8: Physical memory map
 
 Meanwhile, the maximum supported virtual address for each task is 4GB.
 
-![Virtual_memory_map.png](https://github.com/liutgnu/geniux/blob/master/Virtual_memory_map.png)
+![Virtual_memory_map.png](https://github.com/liutgnu/geniux/blob/master/pictures/Virtual_memory_map.png)
 
 Figure 9: Virtual memory map
 
