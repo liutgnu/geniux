@@ -23,7 +23,7 @@ If something goes wrong, make sure you have installed all necessary building too
 
 ### Build app
 
-Once the system finished booting, it will load a user space program called elf_child from it's file system called fs/minix.img. The minix.img already contains an excutable file, you don't have to do this step, but if you'd like to build your own program, type the following command to build one:
+Once the system finished booting, it will load a user space program called elf_child from its file system called fs/minix.img. The minix.img already contains an excutable file, you don't have to do this step, but if you'd like to build your own program, type the following command to build one:
 
 	$ sudo mount fs/minix /mnt
 	$ cd app && make
@@ -71,13 +71,13 @@ As for IBM compatible computers, there is POST(Power-on self-test) right after p
 **Figure 3: Map of geniux.img**
 
 The function of boot sector is to load 
-- 1) kernel, 
-- 2) minix file system and
-- 3) switch CPU mode from Real Mode to Protected Mode.
+- 1) kernel 
+- 2) minix file system
+- 3) switch CPU mode from Real Mode to Protected Mode
 
 ### Why the size of minix file system is 500k?
 
-In real mode of CPU, and in purpose of no damage on BIOS area, the size of available memory is (640k-31k=609k), kernel takes 100k, the maximum size of minix file system is 509k. So I leave it to be 500k, see File system.
+In real mode of CPU, and in purpose of no damage on BIOS area, the size of available memory is (640k-31.5k=608.5k), kernel takes 100k, the maximum size of minix file system is 508.5k. So I leave it to be 500k, see File system.
 
 ### Boot step 1
 
