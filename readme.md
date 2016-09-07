@@ -1,7 +1,6 @@
 # Overview #
 ---
 
-
 ## 1 Introduction ##
 
 Geniux is a 32bit, multi-tasking operate system kernel, based on but not limited to the design of linux-0.12.
@@ -50,24 +49,26 @@ Once you have booted into geniux, you should see a window like this, which indic
 
 ![screenshot](https://github.com/liutgnu/geniux/blob/master/pictures/screenshot.png)
 
-Figure 1: Screen shot of geniux
+**Figure 1: Screen shot of geniux**
 
 ## 4 How geniux works ##
 
 
 ### 4.1 Geniux structure overview
 
-Figure 1: Geniux system structure
+![Geniux_system_structure.png](https://github.com/liutgnu/geniux/blob/master/pictures/Geniux_system_structure.png)
+
+**Figure 2: Geniux system structure**
 
 Geniux kernel is a monolithic kernel, I mainly referred to [fake-linux-0.00](http://oldlinux.org/Linux.old/kernel/0.00/linux-0.00-041217.tar.gz) and [linux-0.12](https://www.kernel.org/pub/linux/kernel/Historic/old-versions/linux-0.12.tar.gz) to build. I think monolithic kernel is easier to learn and understand comparing to microkernel such as minix3. User tasks run in user mode, cpu privilege ring3, getting all services needed through system call, interrupt 0x80, same as linux; kernel runs in kernel mode, cpu privilege ring0, providing system calls and error handling routine.
 
 ### 4.2 Boot overview
 
-As for IBM compatible computers, there is POST(Power-on self-test) right after powered on. I don't plan to go too far on this, in short, there are a series of testing and initial sequences. After these, BIOS(Basic Input Output System) load the boot sector(512 Bytes) into memory started at address 0x7c00 and jump to that address, this is the very place our system starts. As for geniux, boot sector is the first 512 bytes of geniux.img. Figure 1 shows the map of geniux.img.
+As for IBM compatible computers, there is POST(Power-on self-test) right after powered on. I don't plan to go too far on this, in short, there are a series of testing and initial sequences. After these, BIOS(Basic Input Output System) load the boot sector(512 Bytes) into memory started at address 0x7c00 and jump to that address, this is the very place our system starts. As for geniux, boot sector is the first 512 bytes of geniux.img. Figure 3 shows the map of geniux.img.
 
 ![Map_of_geniux.img.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_geniux.img.png)
 
-Figure 1: Map of geniux.img
+**Figure 3: Map of geniux.img**
 
 The function of boot sector is to load 
 - 1) kernel, 
@@ -84,7 +85,7 @@ BIOS loads boot sector to memory address 0x7c00:
 
 ![Map_of_memory_step_1.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_1.png)
 
-Figure 2: Map of memory, step 1
+**Figure 4: Map of memory, step 1**
 
 ### Boot step 2
 
@@ -92,7 +93,7 @@ Boot sector program copies itself to memory address 0x9dc00(631k), then continue
 
 ![Map_of_memory_step_2.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_2.png)
 
-Figure 3: Map of memory, step 2
+**Figure 5: Map of memory, step 2**
 
 ### Boot step 3
 
@@ -100,7 +101,7 @@ Use BIOS services to get extended memory size, load kernel from floppy disk to m
 
 ![Map_of_memory_step_3.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_3.png)
 
-Figure 4: Map of memory, step 3
+**Figure 6: Map of memory, step 3**
 
 ### Boot step 4
 
@@ -108,7 +109,7 @@ BIOS services are no longer needed, so we move kernel and file system to memory 
 
 ![Map_of_memory_step_4.png](https://github.com/liutgnu/geniux/blob/master/pictures/Map_of_memory_step_4.png)
 
-Figure 5: Map of memory, step 4
+**Figure 7: Map of memory, step 4**
 
 ### Boot step 5
 
@@ -120,7 +121,7 @@ Kernel.s is the main kernel, I mainly referred to a [fake-linux-0.00's](http://o
 
 ![Structure_of_kernel.s.png](https://github.com/liutgnu/geniux/blob/master/pictures/Structure_of_kernel.s.png)
 
-Figure 6: Structure of kernel.s
+**Figure 8: Structure of kernel.s**
 
 Like any other operate systems, geniux contains 4 parts: 
 - process management
@@ -138,29 +139,28 @@ The maximum process quantity is 64, timer interrupts in every 10ms, which invoke
 
 ![Process_scheduling.png](https://github.com/liutgnu/geniux/blob/master/pictures/Process_scheduling.png)
 
-Figure 7: Process scheduling
+**Figure 9: Process scheduling**
 
 ### 5.2 Process creation
 
 Task 0 is created by hand (tss, ldt, gdt are done manually, see kernel.s), then task n is created by syscall fork(). Also, there is exec() syscall to replace the current process image with a new process image.
 
-6 Memory management
--------------------
+## 6 Memory management ##
 
 In geniux, physical addresses 1MB\~3MB are reserved for ramdisk, 3MB above are dynamically allocated memory area for applications.
 
 ![Physical_memory_map.png](https://github.com/liutgnu/geniux/blob/master/pictures/Physical_memory_map.png)
 
-Figure 8: Physical memory map
+**Figure 10: Physical memory map**
 
 Meanwhile, the maximum supported virtual address for each task is 4GB.
 
 ![Virtual_memory_map.png](https://github.com/liutgnu/geniux/blob/master/pictures/Virtual_memory_map.png)
 
-Figure 9: Virtual memory map
+**Figure 11: Virtual memory map**
 
-7 I/O management
-----------------
+## 7 I/O management ##
+
 
 Geniux now only supports read from ramdisk.
 
