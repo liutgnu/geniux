@@ -11,6 +11,17 @@ The purpose of the project is to learn:
 - how linux works
 - fun of kernel hacking
 
+| Kernel version | New features | Lines of code |
+| ------ | ------ | ------ |
+| v0.01 | Bootsector loaded 16-bit kernel | 315 |
+| v0.02 | Bootsector loaded 32-bit kernel and switched to protect mode | 467 |
+| v0.03 | Keyboard driver, timer and task switching | 1059 |
+| v0.04 | Sound blaster 16 driver, music playing | 1578 |
+| v0.05 | Deleted irrelevant drivers, implemented fork() system call | 1381 |
+| v0.06 | MINIX file system implementation | 2468 |
+| v0.07 | Implemented exec() system call, new OS could load and run ELF format executable files | 2989 |
+| v0.08 | Implemented library functions such as malloc(), in support of some user programs | 4111 |
+
 ## 2 Building and running ##
 
 ### Build system
