@@ -1,6 +1,7 @@
-CFLAGS = -g -fno-stack-protector
+ASFLAGS = -g --32
+CFLAGS = -m32 -g -fno-stack-protector
 CPP = -c -I../include
-LDFLAGS = -r
+LDFLAGS = -r -m elf_i386
 objects = memory.o
 
 mm.o:$(objects) page.o
@@ -9,7 +10,7 @@ mm.o:$(objects) page.o
 	gcc $(CPP) $(CFLAGS) -o $*.o $<
 
 page.o:page.s
-	as -g -o page.o page.s
+	as $(ASFLAGS) -o page.o page.s
 
 clean:
 	rm -f $(objects) page.o mm.o

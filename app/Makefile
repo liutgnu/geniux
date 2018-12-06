@@ -1,10 +1,11 @@
+CFLAGS = -m32
 CPP = -c -Iinclude
 objects = calc_num.o compiler.o
 
 elf_child:$(objects) lib/lib.o
 	ld -e main -o elf_child $(objects) lib/lib.o
 .c.o:
-	gcc $(CPP) -o $*.o $<
+	gcc $(CPP) $(CFLAGS) -o $*.o $<
 lib/lib.o:
 	(cd lib;make)
 

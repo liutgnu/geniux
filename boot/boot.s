@@ -118,8 +118,9 @@ cli
 lidt idt_opcode
 lgdt gdt_opcode
 
-mov ax,#0x0001
-lmsw ax
+mov eax,cr0
+or eax,#0x0001
+mov cr0,eax
 
 jmpi 0,8
 

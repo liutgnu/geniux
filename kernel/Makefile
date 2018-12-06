@@ -1,6 +1,7 @@
-CFLAGS = -g -fno-stack-protector
+ASFLAGS = --32 -g
+CFLAGS = -m32 -g -fno-stack-protector
 CPP = -c -I../include
-LDFLAGS = -r
+LDFLAGS = -r -m elf_i386
 objects = elf.o exec.o fork.o panic.o printk.o schedule.o syscall.o sys_interface.o user_task.o
 
 geniux.o:$(objects) kernel.o
@@ -10,7 +11,7 @@ geniux.o:$(objects) kernel.o
 	gcc $(CPP) $(CFLAGS) -o $*.o $<
 
 kernel.o:kernel.s
-	as -g -o kernel.o kernel.s
+	as $(ASFLAGS) -o kernel.o kernel.s
 
 clean:
 	rm -f $(objects) kernel.o geniux.o

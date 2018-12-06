@@ -1,6 +1,6 @@
-CFLAGS = -g -fno-stack-protector
+CFLAGS = -m32 -g -fno-stack-protector
 CPP = -c -I../include
-LDFLAGS = -r
+LDFLAGS = -r -m elf_i386
 objects = blk_buffer.o fs_init.o iname.o ramdisk.o zmap.o file.o imap.o inode.o super.o
 
 fs.o:$(objects)

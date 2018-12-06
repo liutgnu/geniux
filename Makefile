@@ -1,4 +1,4 @@
-LDFLAGS = -Ttext 0x00
+LDFLAGS = -Ttext 0x00 -m elf_i386
 ARCHIVES = kernel/geniux.o fs/fs.o mm/mm.o
 
 geniux:fakedisk tool/floppy_img
